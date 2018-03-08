@@ -6,7 +6,7 @@
       infinite-scroll-distance="10"
       class="content"
     >
-      <div v-for="item in songListIndex" class="songList">
+      <div v-for="item in songListIndex" class="songList" @click="doSong(item)">
         <img :src='"http://imgcache.qq.com/music/photo/album_300/"+(item.data.albumid%100)+"/300_albumpic_"+item.data.albumid+"_0.jpg"'>
         <div class="songTitle">{{item.data.albumname}}</div>
       </div>
@@ -20,7 +20,6 @@
   import Vue from 'vue'
   import { Indicator } from 'mint-ui';
   import { InfiniteScroll } from 'mint-ui';
-
   Vue.use(InfiniteScroll);
   export default {
     data(){
@@ -28,16 +27,16 @@
         title:'',
         songListIndex:[],
         songList:[],
+
         dropDown:0,
       }
     },
     created(){
       const root = this;
-     // this.getTitle();
+      // this.getTitle();
       this.getData();
     },
     methods:{
-
       getTitle(){
         const root = this;
         root.title = root.$router.history.current.name;
@@ -56,7 +55,6 @@
           success: function(data){
             root.songList=data.songlist
             Indicator.close();
-
           },
           error:function (e) {
             console.log('error');
@@ -69,9 +67,6 @@
         setTimeout(function () {
           root.doDropDown();
         },1000)
-
-
-
       },
       doDropDown(){
         const root = this;
@@ -82,6 +77,11 @@
             root.songListIndex.push(root.songList[i])
           }
         }
+      },
+      doSong(item){
+        const root = this;
+        sessionStorage.setItem('songMessage',JSON.stringify(item));
+        root.$router.push({path:'/playSongIndex'})
       }
     }
   }
@@ -90,14 +90,13 @@
 <style  scoped>
   .content{
     width: 100%;
+    background: #F2F6FC;
     float: left;
   }
   .songList{
     width: calc(25% - 20px);
-
     margin: 10px;
     float: left;
-
   }
   .songList>img{
     width: 100%;
@@ -114,6 +113,4 @@
     font-size: 13px;
     color: #043644;
   }
-
 </style>
-

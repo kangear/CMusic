@@ -100,8 +100,6 @@
   }
   .loadRouter{
     margin-top: 80px;
-    height: calc(100vh - 80px);
-    background: #f2f2f2;
   }
   .iconfont{
     font-size: 1.3rem;

@@ -3,9 +3,9 @@
     <div class="bg"></div>
     <div class="bgUp"></div>
     <div class="playSongDiv" :style="playSongDiv" @click="doSong">
-      <img class="playImg" src="http://imgcache.qq.com/music/photo/album_300/67/300_albumpic_138767_0.jpg">
+      <img class="playImg" :src="'http://imgcache.qq.com/music/photo/album_300/'+(songMessage.data.albumid%100)+'/300_albumpic_'+songMessage.data.albumid+'_0.jpg'">
     </div>
-    <audio id="audio" src="http://ws.stream.qqmusic.qq.com/C100002qU5aY3Qu24y.m4a?fromtag=0"  controls="controls"></audio>
+    <audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.data.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
 
     <div class="lyric">
       <div class="transformDiv" :style="transform">
@@ -13,18 +13,24 @@
       </div>
 
     </div>
+
   </div>
 </template>
 
 <script>
   import $ from 'jquery'
+  import Vue from 'vue'
+  import { Indicator } from 'mint-ui';
+  import { MessageBox } from 'mint-ui';
   export default {
     data(){
       return{
         lyric:[],//存放歌词和歌词时间
         transform:{//所有歌词存放样式
-          top:0,
+          transform:'',
         },
+        songMessage:{},//存放存过来的音乐对象
+        popupVisible:false,
         timeStart:'',//存放定时器
         times:{//存放歌词时间变量
           n:20,
@@ -40,30 +46,44 @@
       }
     },
     created(){
+      this.getSongMessage();
       this.getSong();
+
     },
     methods:{
       getSong(){
         const root = this;
-        let id = "410316";
+        Indicator.open('努力加载中...');
+        let id = "213212911";
         let txt= "http://music.qq.com/miniportal/static/lyric/"+id%100+"/"+id+".xml";
         let YqlUrl= 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20xml%20where%20url%3D"'+txt+'"&format=json&diagnostics=true&callback=?'
         $.getJSON(YqlUrl,function(data) {
-          let lyricTime = [];
-          for(let i = 6;i<data.query.results.lyric.split("[").length;i++){
-            root.lyric.push({
-              lyric:data.query.results.lyric.split("[")[i].split("]")[1],
-              lyricTime:root.getTime(data.query.results.lyric.split("[")[i].split("]")[0]),
-              lyFontStyle:{//所有单条歌词样式
-                fontSize:'14px',
-                color:'white'
-              },
-            })
+          Indicator.close();
+          if(!data.query.results){
+            MessageBox('提示', '抱歉！歌词被搬到银河系了~');
           }
+          else{
+            let lyricTime = [];
+            for(let i = 6;i<data.query.results.lyric.split("[").length;i++){
+              root.lyric.push({
+                lyric:data.query.results.lyric.split("[")[i].split("]")[1],
+                lyricTime:root.getTime(data.query.results.lyric.split("[")[i].split("]")[0]),
+                lyFontStyle:{//所有单条歌词样式
+                  fontSize:'14px',
+                  color:'white'
+                },
+              })
+            }
+          }
+
 
 
         });
 
+      },
+      getSongMessage(){
+        const root = this;
+        root.songMessage=JSON.parse(sessionStorage.getItem('songMessage'));
       },
       doSong(){
         const root = this;
@@ -85,7 +105,10 @@
       //歌词开始播放
       lyricsPlay(){
         const root = this;
-        root.doLyrics(root.lyric[root.times.i].lyricTime);
+        if(root.lyric.length > 0){
+          root.doLyrics(root.lyric[root.times.i].lyricTime);
+        }
+
       },
       //歌词暂停播放
       lyricsPause(){
@@ -112,7 +135,7 @@
               }
             }
           }
-          root.$set(root.transform,'top',root.times.n+'px');
+          root.$set(root.transform,'transform','translateY('+root.times.n+'px)');
           root.doLyrics(root.lyric[root.times.i].lyricTime);
 
         },parseInt(root.lyric[root.times.i].lyricTime)-time);
@@ -189,7 +212,7 @@
   }
   .transformDiv{
     position: relative;
-    transition: top 0.5s linear;
+    transition: transform 0.5s linear;
   }
   .transformDiv>div{
     width: calc(100% - 70px);
