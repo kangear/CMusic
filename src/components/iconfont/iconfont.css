@@ -1,4 +1,4 @@
-@import "https://at.alicdn.com/t/font_575664_21fwinq8hgkwewmi.css";
+@import "https://at.alicdn.com/t/font_575664_01yhgd1tj5e1att9.css";
 
 .iconfont {
   font-family:"iconfont" !important;
@@ -22,4 +22,11 @@
 
 .icon-wodekong:before { content: "\e60d"; }
 .icon-wodeshi:before { content: "\e687"; }
+
+.bofang:before { content: "\e606" ; }
+.zanting:before { content: "\e668" ; }
+.guanbi:before { content: "\e639" ; }
+.xiazai:before { content: "\e694" ; }
+.shoucang:before{ content: "\e63b" ; }
+
 

@@ -13,6 +13,7 @@
 
 <style>
   @import "./components/iconfont/iconfont.css";
+  @import "./components/animate/animate.css";
 
   body,html{
     margin: 0;

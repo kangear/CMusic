@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+import Login from '@/components/index/login'
 import Navigation from '@/components/index/navigation'
 
 import LastNew from '@/components/page/lastNew'
@@ -13,6 +15,11 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path:'/',
+      name:'首页',
+      component:Login
+    },
     {
       path: '/navigation',
       name: '导航条',

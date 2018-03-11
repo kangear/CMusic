@@ -10,16 +10,17 @@
         <img :src='"http://imgcache.qq.com/music/photo/album_300/"+(item.data.albumid%100)+"/300_albumpic_"+item.data.albumid+"_0.jpg"'>
         <div class="songTitle">{{item.data.albumname}}</div>
       </div>
+
     </div>
 
   </div>
 </template>
 <script>
-  import http from 'axios'
   import $ from 'jquery'
   import Vue from 'vue'
   import { Indicator } from 'mint-ui';
   import { InfiniteScroll } from 'mint-ui';
+  import Bus from '../../global/bus.vue'
   Vue.use(InfiniteScroll);
   export default {
     data(){
@@ -27,7 +28,6 @@
         title:'',
         songListIndex:[],
         songList:[],
-
         dropDown:0,
       }
     },
@@ -35,8 +35,10 @@
       const root = this;
       // this.getTitle();
       this.getData();
+
     },
     methods:{
+
       getTitle(){
         const root = this;
         root.title = root.$router.history.current.name;
@@ -53,7 +55,7 @@
           jsonp: "jsonpCallback",
           scriptCharset: 'GBK',//解决中文乱码
           success: function(data){
-            root.songList=data.songlist
+            root.songList=data.songlist;
             Indicator.close();
           },
           error:function (e) {
@@ -80,8 +82,10 @@
       },
       doSong(item){
         const root = this;
-        sessionStorage.setItem('songMessage',JSON.stringify(item));
-        root.$router.push({path:'/playSongIndex'})
+        item.showSmallSong = true;
+        Bus.$emit('acceptMessage', item)
+//        sessionStorage.setItem('songMessage',JSON.stringify(item));
+//        root.$router.push({path:'/playSongIndex'})
       }
     }
   }
@@ -105,7 +109,9 @@
   }
   .songList>.songTitle{
     width: 100%;
-    padding: 5px 0;
+    /*padding: 5px 0;*/
+    height: 30px;/*给高度超出文字才不会影响下一行*/
+    line-height: 30px;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space: nowrap;/*加宽度width属来兼容部分浏览*/
