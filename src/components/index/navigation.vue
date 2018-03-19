@@ -4,7 +4,6 @@
       <div v-for="item in navigation" :style="item.style" @click="loadPage(item.className)" >
         <span :class="item.icon"></span>{{item.name}}
       </div>
-
     </div>
     <router-view class="loadRouter"></router-view>
     <div class="showBottomDiv" v-if="songSmallMessage.showSmallSong"></div>
@@ -14,7 +13,7 @@
         <span v-if="showPlay" @click="doSong('pause')" class="iconfont bofang"></span>
         <span v-if="!showPlay" @click="doSong('play')" class="iconfont zanting"></span>
         <div class="leftDiv">
-          <img class="playImg" autoplay :src="'http://imgcache.qq.com/music/photo/album_300/'+(songSmallMessage.data.albumid%100)+'/300_albumpic_'+songSmallMessage.data.albumid+'_0.jpg'">
+          <img class="playImg" :style="animationPlayState" @click="playSong" autoplay :src="'http://imgcache.qq.com/music/photo/album_300/'+(songSmallMessage.albumid%100)+'/300_albumpic_'+songSmallMessage.albumid+'_0.jpg'">
         </div>
         <div  class="rightDiv">
           <mt-range
@@ -24,7 +23,7 @@
             :max="songMaxRange"
             :bar-height="1">
           </mt-range>
-          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.data.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
+          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
         </div>
 
     </div>
@@ -48,6 +47,9 @@
         songSmallMessage:{},
         songRange:0,
         songMaxRange:0,
+        animationPlayState:{
+          animationPlayState:'running'
+        },
         navigation:[
           {
             className:'lastNew',
@@ -84,7 +86,7 @@
       }
     },
     created(){
-//      this.loadPage(this.$router.history.current.path.split('/navigation/')[1]);
+      this.loadPage(location.hash.split('#/navigation/')[1]);
       this.getBus();
     },
     updated(){
@@ -100,6 +102,7 @@
         Bus.$on('acceptMessage',(msg) => {
           root.songSmallMessage=msg;
           root.showPlay=false;
+          root.animationPlayState.animationPlayState = 'running'
           root.getSongTime();
 
         })
@@ -137,11 +140,17 @@
       doSong(s){
         const root = this;
         switch (s){
-          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();break;
-          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();break;
+          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();root.animationPlayState.animationPlayState = 'paused';break;
+          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();root.animationPlayState.animationPlayState = 'running';break;
           case 'close':clearInterval(root.timeStart);root.songSmallMessage.showSmallSong=false;
           $('#audio')[0].pause();root.songRange=0;root.songMaxRange=0;break;
         }
+      },
+      playSong(){
+        const root = this;
+
+        sessionStorage.setItem('songMessage',JSON.stringify(root.songSmallMessage));
+        root.$router.push({path:'/playSongIndex'})
       },
 
     }
@@ -203,6 +212,11 @@
     margin: 5px 0;
     border-radius: 100%;
     box-shadow: 0 0 3px 2px white;
+    animation: rotation 10s linear infinite;
+  }
+  @keyframes rotation{
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
   }
   .rightDiv{
     width: 55%;
@@ -246,5 +260,7 @@
     width: 100%;
     float: left;
   }
+
+
 
 </style>

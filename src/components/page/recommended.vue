@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="songDiv" v-for="item in songList" @click="doSong(item)">
+    <div class="songDiv" v-for="item in songList" @click="doSong(item.data)">
       <div class="leftDiv">
         <div class="songnameDiv">{{item.data.songname}}</div>
         <div class="lineDiv">-</div>
@@ -41,7 +41,6 @@
           scriptCharset: 'GBK',//解决中文乱码
           success: function(data){
             root.songList=data.songlist;
-            console.log(root.songList);
             Indicator.close();
           },
           error:function (e) {
@@ -98,15 +97,15 @@
     text-align: center;
   }
   .bofang{
-    color: green;
+    color: #67C23A;
     position: relative;
   }
   .shoucang{
-    color: red;
+    color: #F56C6C;
     position: relative;
   }
   .xiazai{
-    color: blue;
+    color: #409EFF;
     position: relative;
   }
 

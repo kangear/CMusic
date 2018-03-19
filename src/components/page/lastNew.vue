@@ -3,10 +3,10 @@
     <div
       v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
-      infinite-scroll-distance="10"
+      infinite-scroll-distance="1"
       class="content"
     >
-      <div v-for="item in songListIndex" class="songList" @click="doSong(item)">
+      <div v-for="item in songListIndex" class="songList" @click="doSong(item.data)">
         <img :src='"http://imgcache.qq.com/music/photo/album_300/"+(item.data.albumid%100)+"/300_albumpic_"+item.data.albumid+"_0.jpg"'>
         <div class="songTitle">{{item.data.albumname}}</div>
       </div>
@@ -84,8 +84,7 @@
         const root = this;
         item.showSmallSong = true;
         Bus.$emit('acceptMessage', item)
-//        sessionStorage.setItem('songMessage',JSON.stringify(item));
-//        root.$router.push({path:'/playSongIndex'})
+
       }
     }
   }

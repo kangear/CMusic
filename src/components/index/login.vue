@@ -4,22 +4,41 @@
         <div class="welcome" v-if="showLogin">Welcome</div>
     </transition>
     <transition name="slide-fade">
-        <div class="to"  v-if="showLogin" ><span class="iconfont bofang"></span>To</div>
+        <div class="to"  v-if="showLogin" ><span class="iconfont icon-yinyueshi"></span>To</div>
     </transition>
     <transition name="bounce">
-      <div class="cmusic" v-if="showLogin" >CMusic</div>
+      <div class="cmusic" v-if="showCMusic" ><span style="color: #E6A23C">C</span>Music</div>
+    </transition>
+    <transition
+      name="custom-classes-transition"
+      enter-active-class="animated jello"
+      leave-active-class="animated snake"
+    >
+    <div class="loading" v-if="loadingBtn"><mt-button type="default" size="normal" @click="doLogin">
+      <span class="iconfont bofang"></span>Let's Go !
+    </mt-button></div>
     </transition>
     <transition name="slide-fade">
-        <div class="loading"  v-if="showLogin" >Loading...</div>
+      <div v-if="showLogin" class="author">
+        author : hzc<br>
+        github : https://github.com/hhzzcc/CMusic
+      </div>
     </transition>
+
   </div>
 </template>
 
 <script>
+  import Vue from 'vue'
+  import { Button } from 'mint-ui';
+
+  Vue.component(Button.name, Button);
   export default {
     data(){
       return{
-        showLogin:false
+        showLogin:false,
+        showCMusic:false,
+        loadingBtn:false,
       }
     },
     mounted(){
@@ -30,10 +49,18 @@
         const root = this;
         setTimeout(function () {
           root.showLogin = true;
-          setTimeout(function () {
-            root.$router.push({path:'/navigation/lastNew'})
-          },2000)
-        },2000);
+          setTimeout(function(){
+            root.showCMusic = true;
+            setTimeout(function () {
+              root.loadingBtn = true;
+            },500)
+          },500)
+        },500);
+      },
+      doLogin(){
+        const root = this;
+        root.$router.push({path:'/navigation/lastNew'})
+
       }
     }
   }
@@ -45,37 +72,53 @@
     background: #054547;
   }
   #parent>div{
-    width: 100%;
     float: left;
-    text-align: center;
-
   }
   .welcome{
+    width: 100%;
     height: 17vh;
     line-height: 17vh;
     font-size: 10vh;
     color: white;
+    text-align: center;
   }
   .to{
+    width: 100%;
     height: 17vh;
     line-height: 17vh;
     font-size: 10vh;
     color: white;
+    text-align: center;
   }
-  .bofang{
+  .icon-yinyueshi{
     font-size: 10vh;
+    color: #67C23A;
   }
   .cmusic{
+    width: 100%;
     height: 25vh;
     line-height: 25vh;
     font-size: 15vh;
-    color: white;
+    color: #67C23A;
+    text-align: center;
   }
    .loading{
+     width: 100%;
      height: 17vh;
      line-height: 17vh;
-     font-size: 10vh;
+     text-align: center;
+   }
+   .author{
+     width: 90%;
+     margin: 0 5% 5vh 5%;
+     height: 5vh;
+     position: absolute;
+     bottom: 0;
+     line-height: 5vh;
      color: white;
+     text-align: left;
+     font-size: 10%;
+
    }
   .slide-fade-enter-active {
     transition: all .3s ease;

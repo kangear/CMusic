@@ -28,6 +28,7 @@
     margin: 0 auto;
     height: 100vh;
     position: relative;
+    overflow-x: hidden;
   }
   #parent{
     width: 100%;

@@ -1,11 +1,16 @@
 <template>
   <div id="parent">
+    <div class="topBar">
+      <span class="iconfont fanhui" @click="goBack"></span>
+    </div>
     <div class="bg"></div>
     <div class="bgUp"></div>
-    <div class="playSongDiv" :style="playSongDiv" @click="doSong">
-      <img class="playImg" :src="'http://imgcache.qq.com/music/photo/album_300/'+(songMessage.data.albumid%100)+'/300_albumpic_'+songMessage.data.albumid+'_0.jpg'">
+    <div class="playSongDiv"  @click="doSong">
+      <span v-if="showPlay" @click="doSong('pause')" class="iconfont bofang"></span>
+      <span v-if="!showPlay" @click="doSong('play')" class="iconfont zanting"></span>
+      <img class="playImg" :style="animationPlayState"  :src="'http://imgcache.qq.com/music/photo/album_300/'+(songMessage.albumid%100)+'/300_albumpic_'+songMessage.albumid+'_0.jpg'">
     </div>
-    <audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.data.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
+    <audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
 
     <div class="lyric">
       <div class="transformDiv" :style="transform">
@@ -20,6 +25,8 @@
 <script>
   import $ from 'jquery'
   import Vue from 'vue'
+  import http from 'axios'
+  import Base64 from 'js-base64'
   import { Indicator } from 'mint-ui';
   import { MessageBox } from 'mint-ui';
   export default {
@@ -29,6 +36,10 @@
         transform:{//所有歌词存放样式
           transform:'',
         },
+        animationPlayState:{
+          animationPlayState:'paused'
+        },
+        showPlay:true,
         songMessage:{},//存放存过来的音乐对象
         popupVisible:false,
         timeStart:'',//存放定时器
@@ -37,12 +48,6 @@
           i:0
         },
         isPlay:false,//判断是否为播放状态
-
-        rotate:{//旋转变量
-          angle:0,
-          rotateTimeStart:''
-        },
-        playSongDiv:{},//图片父元素样式
       }
     },
     created(){
@@ -51,53 +56,41 @@
 
     },
     methods:{
+      goBack(){
+        this.$router.go(-1);
+      },
       getSong(){
         const root = this;
         Indicator.open('努力加载中...');
-        let id = "213212911";
-        let txt= "http://music.qq.com/miniportal/static/lyric/"+id%100+"/"+id+".xml";
-        let YqlUrl= 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20xml%20where%20url%3D"'+txt+'"&format=json&diagnostics=true&callback=?'
-        $.getJSON(YqlUrl,function(data) {
-          Indicator.close();
-          if(!data.query.results){
-            MessageBox('提示', '抱歉！歌词被搬到银河系了~');
-          }
-          else{
-            let lyricTime = [];
-            for(let i = 6;i<data.query.results.lyric.split("[").length;i++){
+        http.get('/getLrc',{params:{songId:root.songMessage.songmid}}).then((data)=>{
+          eval(data.data);//再次执行一次代码
+          function MusicJsonCallback_lrc(data){
+            let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
+            for(let i = 1;i<lyric.length;i++){
               root.lyric.push({
-                lyric:data.query.results.lyric.split("[")[i].split("]")[1],
-                lyricTime:root.getTime(data.query.results.lyric.split("[")[i].split("]")[0]),
+                lyric:lyric[i].split("[")[1].split("]")[1],
+                lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
                 lyFontStyle:{//所有单条歌词样式
                   fontSize:'14px',
                   color:'white'
                 },
               })
             }
+            Indicator.close();
           }
+        })
 
-
-
-        });
 
       },
       getSongMessage(){
         const root = this;
         root.songMessage=JSON.parse(sessionStorage.getItem('songMessage'));
       },
-      doSong(){
+      doSong(s){
         const root = this;
-        root.isPlay = !root.isPlay;
-        let audio = $('#audio')[0];
-
-        if(root.isPlay){
-          audio.play();
-          root.lyricsPlay();
-          root.doRotate();
-        }else{
-          audio.pause();
-          clearInterval(root.rotateTimeStart);
-          root.lyricsPause();
+        switch (s){
+          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();root.lyricsPause();root.animationPlayState.animationPlayState = 'paused';break;
+          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();root.lyricsPlay();root.animationPlayState.animationPlayState = 'running';break;
         }
 
       },
@@ -143,18 +136,6 @@
           clearTimeout(root.timeStart);
         }
       },
-      doRotate(){
-        const root = this;
-        root.rotateTimeStart=setInterval(function () {
-          root.rotate.angle+=0.1;
-          root.playSongDiv={
-            transform:'rotate('+root.rotate.angle+'deg)'
-          }
-          if(parseInt(root.rotate.angle==360)){
-            root.rotate.angle=0;
-          }
-        })
-      },
       getTime(str){
         let minutes = parseInt(str.split(':')[0]);
         let seconds = parseInt(str.split(':')[1].split('.')[0]);
@@ -166,8 +147,12 @@
 </script>
 
 <style scoped>
-  #parent{
-
+  .topBar{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    padding: 20px;
+    z-index: 999;
   }
   .bg{
     background: url("http://imgcache.qq.com/music/photo/album_300/67/300_albumpic_138767_0.jpg") no-repeat;
@@ -199,8 +184,13 @@
     width: 256px;
     margin: 20px;
     border-radius: 50%;
-
+    animation: rotation 10s linear infinite;
   }
+  @keyframes rotation{
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+  }
+
   #audio{
     display: none;
   }
@@ -215,12 +205,22 @@
     transition: transform 0.5s linear;
   }
   .transformDiv>div{
-    width: calc(100% - 70px);
-    margin: 0 35px;
+    width: 100%;
     height: 20px;
     line-height: 20px;
     text-align: center;
     font-size: 0.8rem;
     position: relative;
+  }
+  .bofang,.zanting{
+    font-size: 56px;
+    position: absolute;
+    left:120px;
+    top:120px;
+    color: white;
+    z-index: 999;
+  }
+  .fanhui{
+    color: white;
   }
 </style>
