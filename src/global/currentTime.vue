@@ -2,11 +2,12 @@
   <div></div>
 </template>
 
-<!--输送歌曲信息-->
+
+<!--输送歌曲进度-->
 <script>
   import Vue from 'vue'
   export default new Vue({
-    name: 'bus',
+    name: 'currentTime',
     data () {
       return {
         // code

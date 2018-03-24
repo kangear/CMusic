@@ -29,12 +29,14 @@ export default new Router({
         {path:'recommended',name:'推荐',component:Recommended},
         {path:'search',name:'搜索',component:Search},
         {path:'my',name:'我的',component:My},
+
       ],
     },
     {
-      path:'/playSongIndex',
+      path:'playSongIndex',
       name: '播放音乐',
       component: PlaySongIndex,
     }
+
   ]
 })

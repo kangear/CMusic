@@ -10,7 +10,7 @@
       <span v-if="!showPlay" @click="doSong('play')" class="iconfont zanting"></span>
       <img class="playImg" :style="animationPlayState"  :src="'http://imgcache.qq.com/music/photo/album_300/'+(songMessage.albumid%100)+'/300_albumpic_'+songMessage.albumid+'_0.jpg'">
     </div>
-    <audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
+    <!--<audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>-->
 
     <div class="lyric">
       <div class="transformDiv" :style="transform">
@@ -26,6 +26,8 @@
   import $ from 'jquery'
   import Vue from 'vue'
   import http from 'axios'
+
+  import currentTime from '../../global/currentTime.vue'
   import Base64 from 'js-base64'
   import { Indicator } from 'mint-ui';
   import { MessageBox } from 'mint-ui';
@@ -53,11 +55,14 @@
     created(){
       this.getSongMessage();
       this.getSong();
+      this.getCurrentTime();
 
     },
     methods:{
       goBack(){
-        this.$router.go(-1);
+        const root = this;
+        root.$router.go(-1);
+
       },
       getSong(){
         const root = this;
@@ -67,14 +72,17 @@
           function MusicJsonCallback_lrc(data){
             let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
             for(let i = 1;i<lyric.length;i++){
-              root.lyric.push({
-                lyric:lyric[i].split("[")[1].split("]")[1],
-                lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
-                lyFontStyle:{//所有单条歌词样式
-                  fontSize:'14px',
-                  color:'white'
-                },
-              })
+              if(lyric[i].split("[")[1].split("]")[1]){
+                root.lyric.push({
+                  lyric:lyric[i].split("[")[1].split("]")[1],
+                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
+                  lyFontStyle:{//所有单条歌词样式
+                    fontSize:'14px',
+                    color:'white'
+                  },
+                })
+              }
+
             }
             Indicator.close();
           }
@@ -85,6 +93,11 @@
       getSongMessage(){
         const root = this;
         root.songMessage=JSON.parse(sessionStorage.getItem('songMessage'));
+      },
+      getCurrentTime(){
+        currentTime.$on('currentTime',(msg) =>  {
+          console.log(msg);
+        })
       },
       doSong(s){
         const root = this;
@@ -111,9 +124,10 @@
 
       doLyrics(time){
         const root = this;
-        ++root.times.i;
-        root.times.n-=20;
+
         root.timeStart = setTimeout(function () {
+          ++root.times.i;
+          root.times.n-=20;
           root.lyric[root.times.i].lyFontStyle={
             fontSize:'16px',
             color:'#67C23A'
@@ -131,8 +145,8 @@
           root.$set(root.transform,'transform','translateY('+root.times.n+'px)');
           root.doLyrics(root.lyric[root.times.i].lyricTime);
 
-        },parseInt(root.lyric[root.times.i].lyricTime)-time);
-        if(root.times.i==root.lyric.length-2){
+        },parseInt(root.lyric[root.times.i+1].lyricTime)-time);
+        if(root.times.i == root.lyric.length-1){
           clearTimeout(root.timeStart);
         }
       },
@@ -147,6 +161,10 @@
 </script>
 
 <style scoped>
+  #parent{
+    position: relative;
+    z-index: 1;
+  }
   .topBar{
     width: 100%;
     position: absolute;
