@@ -54,7 +54,6 @@
     },
     created(){
       this.getSongMessage();
-      this.getSong();
       this.getCurrentTime();
 
     },
@@ -64,97 +63,66 @@
         root.$router.go(-1);
 
       },
-      getSong(){
-        const root = this;
-        Indicator.open('努力加载中...');
-        http.get('/getLrc',{params:{songId:root.songMessage.songmid}}).then((data)=>{
-          eval(data.data);//再次执行一次代码
-          function MusicJsonCallback_lrc(data){
-            let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
-            for(let i = 1;i<lyric.length;i++){
-              if(lyric[i].split("[")[1].split("]")[1]){
-                root.lyric.push({
-                  lyric:lyric[i].split("[")[1].split("]")[1],
-                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
-                  lyFontStyle:{//所有单条歌词样式
-                    fontSize:'14px',
-                    color:'white'
-                  },
-                })
-              }
-
-            }
-            Indicator.close();
-          }
-        })
-
-
-      },
+//      getSong(){
+//        const root = this;
+//        http.get('/getLrc',{params:{songId:root.songMessage.songmid}}).then((data)=>{
+//          eval(data.data);//再次执行一次代码
+//          function MusicJsonCallback_lrc(data){
+//            let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
+//            for(let i = 1;i<lyric.length;i++){
+//              if(lyric[i].split("[")[1].split("]")[1]){
+//                root.lyric.push({
+//                  lyric:lyric[i].split("[")[1].split("]")[1],
+//                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
+//                  lyFontStyle:{//所有单条歌词样式
+//                    fontSize:'14px',
+//                    color:'white'
+//                  },
+//                })
+//              }
+//
+//            }
+//          }
+//        })
+//
+//
+//      },
       getSongMessage(){
         const root = this;
-        root.songMessage=JSON.parse(sessionStorage.getItem('songMessage'));
+        root.songMessage = JSON.parse(sessionStorage.getItem('songMessage'));
+        root.showPlay = false;
+        root.animationPlayState.animationPlayState = 'running'
+
       },
       getCurrentTime(){
+        const root = this;
+
         currentTime.$on('currentTime',(msg) =>  {
-          console.log(msg);
+
+          root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
+
+
+            for(let i = 0;i <msg.lyric.length;i++){
+              root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
+              root.$set(root.lyric[i].lyFontStyle,'color',msg.lyric[i].lyFontStyle.color);
+            }
+            root.$set(root.transform,'transform','translateY('+(msg.i*20*(-1)+20)+'px)');
         })
       },
       doSong(s){
         const root = this;
         switch (s){
-          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();root.lyricsPause();root.animationPlayState.animationPlayState = 'paused';break;
-          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();root.lyricsPlay();root.animationPlayState.animationPlayState = 'running';break;
+          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();root.animationPlayState.animationPlayState = 'paused';break;
+          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();root.animationPlayState.animationPlayState = 'running';break;
         }
 
       },
 
-      //歌词开始播放
-      lyricsPlay(){
-        const root = this;
-        if(root.lyric.length > 0){
-          root.doLyrics(root.lyric[root.times.i].lyricTime);
-        }
-
-      },
-      //歌词暂停播放
-      lyricsPause(){
-        const root = this;
-        clearTimeout(root.timeStart);
-      },
-
-      doLyrics(time){
-        const root = this;
-
-        root.timeStart = setTimeout(function () {
-          ++root.times.i;
-          root.times.n-=20;
-          root.lyric[root.times.i].lyFontStyle={
-            fontSize:'16px',
-            color:'#67C23A'
-
-          }
-          for(let i = 0;i<root.lyric.length;i++){
-            if(i!=root.times.i){
-              root.lyric[i].lyFontStyle={
-                fontSize:'14px',
-                color:'white'
-
-              }
-            }
-          }
-          root.$set(root.transform,'transform','translateY('+root.times.n+'px)');
-          root.doLyrics(root.lyric[root.times.i].lyricTime);
-
-        },parseInt(root.lyric[root.times.i+1].lyricTime)-time);
-        if(root.times.i == root.lyric.length-1){
-          clearTimeout(root.timeStart);
-        }
-      },
       getTime(str){
         let minutes = parseInt(str.split(':')[0]);
         let seconds = parseInt(str.split(':')[1].split('.')[0]);
         let ms = parseInt(str.split('.')[1]);
-        return (minutes*60+seconds+ms/100)*1000;
+        return Math.floor((minutes*60+seconds+ms/100)*10);
       }
     }
   }

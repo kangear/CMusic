@@ -70,6 +70,8 @@
   #parent{
     text-align: center;
     background: #054547;
+    z-index: 1;
+    position: relative;
   }
   #parent>div{
     float: left;

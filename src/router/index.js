@@ -33,7 +33,7 @@ export default new Router({
       ],
     },
     {
-      path:'playSongIndex',
+      path:'/playSongIndex',
       name: '播放音乐',
       component: PlaySongIndex,
     }

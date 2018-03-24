@@ -28,9 +28,11 @@
 <script>
   import Vue from 'vue'
   import $ from 'jquery'
+  import http from 'axios'
   import Bus from './global/bus.vue'
   import currentTime from './global/currentTime.vue'
   import { Range } from 'mint-ui';
+  import Base64 from 'js-base64'
 
   Vue.component(Range.name, Range);
 
@@ -45,6 +47,8 @@
         animationPlayState:{
           animationPlayState:'running'
         },
+        i:0,
+        lyric:[]
       }
     },
     created(){
@@ -65,27 +69,80 @@
           root.showPlay = false;
           root.animationPlayState.animationPlayState = 'running'
           root.getSongTime();
+          root.getSong();
 
         })
       },
+      getSong(){
+        const root = this;
+        root.lyric = [];
+        http.get('/getLrc',{params:{songId:root.songSmallMessage.songmid}}).then((data)=>{
+          eval(data.data);//再次执行一次代码
+          function MusicJsonCallback_lrc(data){
+            let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
+            for(let i = 1;i<lyric.length;i++){
+              if(lyric[i].split("[")[1].split("]")[1]){
+                root.lyric.push({
+                  lyric:lyric[i].split("[")[1].split("]")[1],
+                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
+                  lyFontStyle:{//所有单条歌词样式
+                    fontSize:'14px',
+                    color:'white'
+                  },
+                })
+              }
+
+            }
+          }
+          sessionStorage.setItem('songLyric',JSON.stringify(root.lyric));
+        })
+
+
+      },
       getSongTime(){
         const root = this;
+        let num = 0;
         root.timeStart = setInterval(function () {
           if( $('#audio')[0]){
-            root.songRange = $('#audio')[0].currentTime;
-            root.songMaxRange = $('#audio')[0].duration;
+            root.songRange = Math.floor($('#audio')[0].currentTime * 10 );
+            root.songMaxRange = Math.floor($('#audio')[0].duration * 10 );
+            for(let i = 0; i < root.lyric.length; i++){
+              if(root.songRange == root.lyric[i].lyricTime){
 
+                root.lyric[i].lyFontStyle={
+                  fontSize:'16px',
+                  color:'#67C23A'
+
+                }
+                for(let j = 0;j<root.lyric.length;j++){
+                  if(j!=i){
+                    root.lyric[j].lyFontStyle={
+                      fontSize:'14px',
+                      color:'white'
+
+                    }
+
+                  }
+                }
+                num = i;
+                break;
+
+              }
+            }
+            let para = {
+              i : num,
+              lyric : root.lyric
+            }
+            currentTime.$emit('currentTime',para);
           }
-          if(Math.floor(root.songRange) == Math.floor(root.songMaxRange)){
+          if(root.songRange == root.songMaxRange){
             root.showPlay = true;
+            clearInterval(root.timeStart)
           }
-          let para = {
-            songRange : $('#audio')[0].currentTime,
-            songMaxRange :$('#audio')[0].duration,
-          }
-          currentTime.$emit('currentTime',para);
 
-        },100)
+
+
+        },70)
       },
       doSong(s){
         const root = this;
@@ -99,8 +156,14 @@
       playSong(){
         const root = this;
         sessionStorage.setItem('songMessage',JSON.stringify(root.songSmallMessage));
-        root.$router.push({path:'/playSongIndex'})
+        root.$router.push({path:'/playSongIndex'});
       },
+      getTime(str){
+        let minutes = parseInt(str.split(':')[0]);
+        let seconds = parseInt(str.split(':')[1].split('.')[0]);
+        let ms = parseInt(str.split('.')[1]);
+        return Math.floor((minutes*60+seconds+ms/100)*10);
+      }
 
     }
   }

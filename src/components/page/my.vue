@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="myDiv">
+    <div class="myDiv" @click="myCollect">
       <div class="leftDiv"><span class="iconfont shoucang"></span>我的收藏</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
-    <div class="myDiv">
+    <div class="myDiv" @click="switchTheme">
       <div class="leftDiv"><span class="iconfont icon-tuijiankong"></span>切换主题</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
@@ -12,8 +12,8 @@
       <div class="leftDiv"><span class="iconfont banben"></span>版本介绍</div>
       <div class="rightDiv"><span style="margin-right: 5px">version 2.0</span><mt-badge type="error" size="small">new</mt-badge></div>
     </div>
-    <div class="myDiv">
-      <div class="leftDiv"><span class="iconfont lianxi"></span>联系作者</div>
+    <div class="myDiv" @click="callHzc">
+      <div class="leftDiv"><span class="iconfont lianxi" ></span>联系作者</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
   </div>
@@ -21,6 +21,7 @@
 <script>
   import { Badge } from 'mint-ui';
   import Vue from 'vue'
+  import { Toast } from 'mint-ui';
   Vue.component(Badge.name, Badge);
   export default {
     data(){
@@ -33,7 +34,15 @@
 
     },
     methods:{
-
+      myCollect(){
+        Toast('敬请期待')
+      },
+      switchTheme(){
+        Toast('敬请期待')
+      },
+      callHzc(){
+        Toast('敬请期待')
+      }
 
     }
   }
