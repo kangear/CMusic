@@ -9,6 +9,8 @@ import Recommended from '@/components/page/recommended'
 import Search from '@/components/page/search'
 import My from '@/components/page/my'
 
+import MyCollect from '@/components/my/myCollect'
+
 import PlaySongIndex from '@/components/playSong/index'
 
 Vue.use(Router)
@@ -36,6 +38,11 @@ export default new Router({
       path:'/playSongIndex',
       name: '播放音乐',
       component: PlaySongIndex,
+    },
+    {
+      path:'/myCollect',
+      name: '我的收藏',
+      component: MyCollect,
     }
 
   ]

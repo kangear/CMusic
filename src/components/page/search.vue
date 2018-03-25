@@ -16,7 +16,7 @@
       </div>
       <div class="rightDiv">
         <span class="iconfont bofang"></span>
-        <span class="iconfont shoucang"></span>
+        <span class="iconfont shoucang" @click.stop="collect(item)"></span>
         <span class="iconfont xiazai"></span>
       </div>
     </div>
@@ -29,6 +29,7 @@
   import { Search } from 'mint-ui';
   import { Indicator } from 'mint-ui';
   import { Badge } from 'mint-ui';
+  import { Toast } from 'mint-ui';
 
   Vue.component(Search.name, Search);
   Vue.component(Badge.name, Badge);
@@ -40,7 +41,7 @@
         badgeList:[
           {title:'开始懂了'},
           {title:'我好想你'},
-          {title:'领悟'},
+          {title:'听雪'},
           {title:'死了都要爱'},
           {title:'青花瓷'},
           {title:'街角的祝福'},
@@ -72,7 +73,6 @@
           success: function(data){
 
             root.songList=data.data.song.list;
-            console.log(root.songList);
             Indicator.close();
           },
           error:function (e) {
@@ -85,6 +85,28 @@
         const root = this;
         item.showSmallSong = true;
         Bus.$emit('acceptMessage', item)
+      },
+      collect(it){
+
+        let item = {};
+        item.data = it;
+        console.log(item.data.songmid);
+        if(localStorage.getItem('collectMessage') && localStorage.getItem('collectMessage').length){
+          let collectMessage = JSON.parse(localStorage.getItem('collectMessage'));
+          for(let i = 0; i < collectMessage.length; i++){
+            if(item.data.songmid == collectMessage[i].data.songmid){
+              Toast('已在收藏列表啦！');
+              return;
+            }
+          }
+          Toast('添加成功！');
+          collectMessage.push(item);
+          localStorage.setItem('collectMessage',JSON.stringify(collectMessage));
+
+        }else{
+          Toast('添加成功！');
+          localStorage.setItem('collectMessage',JSON.stringify([item]));
+        }
       }
     }
   }

@@ -8,7 +8,7 @@
       </div>
       <div class="rightDiv">
         <span class="iconfont bofang"></span>
-        <span class="iconfont shoucang"></span>
+        <span class="iconfont shoucang" @click.stop="collect(item)"></span>
         <span class="iconfont xiazai"></span>
       </div>
     </div>
@@ -18,6 +18,7 @@
   import $ from 'jquery'
   import Bus from '../../global/bus.vue'
   import { Indicator } from 'mint-ui';
+  import { Toast } from 'mint-ui';
   export default {
     data(){
       return{
@@ -54,6 +55,26 @@
         Bus.$emit('acceptMessage', item)
 //        sessionStorage.setItem('songMessage',JSON.stringify(item));
 //        root.$router.push({path:'/playSongIndex'})
+      },
+      collect(item){
+        console.log(item)
+        if(localStorage.getItem('collectMessage') && localStorage.getItem('collectMessage').length){
+          let collectMessage = JSON.parse(localStorage.getItem('collectMessage'));
+          for(let i = 0; i < collectMessage.length; i++){
+            console.log(item.data.songmid+','+collectMessage[i].data.songmid );
+            if(item.data.songmid == collectMessage[i].data.songmid){
+              Toast('已在收藏列表啦！');
+              return;
+            }
+          }
+          Toast('添加成功！');
+          collectMessage.push(item);
+          localStorage.setItem('collectMessage',JSON.stringify(collectMessage));
+
+        }else{
+          Toast('添加成功！');
+          localStorage.setItem('collectMessage',JSON.stringify([item]));
+        }
       }
     }
   }

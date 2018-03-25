@@ -40,7 +40,7 @@
     },
     methods:{
       myCollect(){
-        Toast('敬请期待')
+        this.$router.push({path:'/myCollect'})
       },
       switchTheme(){
         Toast('敬请期待')

@@ -172,31 +172,6 @@
 
 
 <style scoped>
-  .header{
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto;
-    position: fixed;
-    top: 0;
-    background: #054547;
-    height: 80px;
-    z-index: 999;
-  }
-  .header>div{
-    float: left;
-    width: calc(25% - 10px);
-    text-align: center;
-    height: 60px;
-    line-height: 70px;
-    font-size: 1.1rem;
-    color: white;
-    margin: 5px;
-    box-sizing: border-box;
-
-  }
-  .loadRouter{
-    margin-top: 80px;
-  }
   .iconfont{
     font-size: 1.3rem;
   }
@@ -269,11 +244,7 @@
     color: white;
     font-size: 4vh;
   }
-  .showBottomDiv{
-    height: 10vh;
-    width: 100%;
-    float: left;
-  }
+
 
 
 
