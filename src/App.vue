@@ -102,6 +102,7 @@
       getSongTime(){
         const root = this;
         let num = 0;
+        clearInterval(root.timeStart)
         root.timeStart = setInterval(function () {
           if( $('#audio')[0]){
             root.songRange = Math.floor($('#audio')[0].currentTime * 10 );

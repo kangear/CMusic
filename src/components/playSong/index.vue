@@ -153,7 +153,7 @@
     width: 100%;
     height: 100%;
     background: black;
-    opacity: 0.8;
+    opacity: 0.9;
   }
   .playSongDiv{
     width: 296px;

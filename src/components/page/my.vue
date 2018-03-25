@@ -16,8 +16,13 @@
       <div class="leftDiv"><span class="iconfont lianxi" ></span>联系作者</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
+    <div class="myDiv" @click="share">
+      <div class="leftDiv"><span class="iconfont fenxiang" ></span>分享网站</div>
+      <div class="rightDiv"><span class="iconfont jiantou"></span></div>
+    </div>
   </div>
 </template>
+
 <script>
   import { Badge } from 'mint-ui';
   import Vue from 'vue'
@@ -41,6 +46,9 @@
         Toast('敬请期待')
       },
       callHzc(){
+        Toast('敬请期待')
+      },
+      share(){
         Toast('敬请期待')
       }
 
