@@ -2,6 +2,7 @@
   <div id="parent">
     <div class="topBar">
       <span class="iconfont fanhui" @click="goBack"></span>
+      <span class="iconfont shoucangshi" @click.stop="collect"></span>
     </div>
     <div class="bg"></div>
     <div class="bgUp"></div>
@@ -31,6 +32,7 @@
   import Base64 from 'js-base64'
   import { Indicator } from 'mint-ui';
   import { MessageBox } from 'mint-ui';
+  import { Toast } from 'mint-ui';
   export default {
     data(){
       return{
@@ -123,6 +125,27 @@
         let seconds = parseInt(str.split(':')[1].split('.')[0]);
         let ms = parseInt(str.split('.')[1]);
         return Math.floor((minutes*60+seconds+ms/100)*10);
+      },
+      collect(){
+        const root = this;
+        let item = {};
+        item.data = root.songMessage;
+        if(localStorage.getItem('collectMessage') && localStorage.getItem('collectMessage').length){
+          let collectMessage = JSON.parse(localStorage.getItem('collectMessage'));
+          for(let i = 0; i < collectMessage.length; i++){
+            if(item.data.songmid == collectMessage[i].data.songmid){
+              Toast('已在收藏列表啦！');
+              return;
+            }
+          }
+          Toast('添加成功！');
+          collectMessage.push(item);
+          localStorage.setItem('collectMessage',JSON.stringify(collectMessage));
+
+        }else{
+          Toast('添加成功！');
+          localStorage.setItem('collectMessage',JSON.stringify([item]));
+        }
       }
     }
   }
@@ -134,11 +157,12 @@
     z-index: 1;
   }
   .topBar{
-    width: 100%;
+    width: calc(100% - 20px);
     position: absolute;
     top: 0;
     padding: 20px;
     z-index: 999;
+    max-width: 520px;
   }
   .bg{
     background: url("http://imgcache.qq.com/music/photo/album_300/67/300_albumpic_138767_0.jpg") no-repeat;
@@ -208,5 +232,10 @@
   }
   .fanhui{
     color: white;
+  }
+  .shoucangshi{
+    color: #F56C6C;
+    float: right;
+    margin-right: 20px;
   }
 </style>

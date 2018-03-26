@@ -57,7 +57,6 @@
 //        root.$router.push({path:'/playSongIndex'})
       },
       collect(item){
-        console.log(item)
         if(localStorage.getItem('collectMessage') && localStorage.getItem('collectMessage').length){
           let collectMessage = JSON.parse(localStorage.getItem('collectMessage'));
           for(let i = 0; i < collectMessage.length; i++){
