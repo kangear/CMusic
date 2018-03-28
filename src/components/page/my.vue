@@ -20,6 +20,13 @@
       <div class="leftDiv"><span class="iconfont fenxiang" ></span>分享网站</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
+    <mt-popup
+      v-model="popupVisible"
+      position="bottom"
+      class="sharePopup"
+    >
+      <div class="jiathis_style_m" @click="text"></div>
+    </mt-popup>
   </div>
 </template>
 
@@ -27,18 +34,27 @@
   import { Badge } from 'mint-ui';
   import Vue from 'vue'
   import { Toast } from 'mint-ui';
+  import { Popup } from 'mint-ui';
+
+  Vue.component(Popup.name, Popup);
   Vue.component(Badge.name, Badge);
   export default {
     data(){
       return{
-
+        popupVisible:false,
       }
     },
     created(){
-
+      this.init()
 
     },
     methods:{
+      init: function () {
+        let url = 'http://v3.jiathis.com/code/jiathis_m.js'
+        let script = document.createElement('script')
+        script.setAttribute('src', url)
+        document.getElementsByTagName('head')[0].appendChild(script)
+      },
       myCollect(){
         this.$router.push({path:'/myCollect'})
       },
@@ -49,7 +65,11 @@
         Toast('敬请期待')
       },
       share(){
-        Toast('敬请期待')
+        const root = this;
+        root.popupVisible = true;
+      },
+      text(){
+        this.$router.push({path:'/'})
       }
 
     }
@@ -73,6 +93,15 @@
     float: left;
     padding: 10px 0;
     text-align: right;
+  }
+  .sharePopup{
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+    padding: 50px 0;
+  }
+  .jiathis_style_m{
+    display: inline-block;
   }
 </style>
 

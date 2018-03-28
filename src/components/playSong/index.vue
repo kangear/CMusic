@@ -43,7 +43,7 @@
         animationPlayState:{
           animationPlayState:'paused'
         },
-        showPlay:true,
+        showPlay:false,
         songMessage:{},//存放存过来的音乐对象
         popupVisible:false,
         timeStart:'',//存放定时器
@@ -65,30 +65,6 @@
         root.$router.go(-1);
 
       },
-//      getSong(){
-//        const root = this;
-//        http.get('/getLrc',{params:{songId:root.songMessage.songmid}}).then((data)=>{
-//          eval(data.data);//再次执行一次代码
-//          function MusicJsonCallback_lrc(data){
-//            let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
-//            for(let i = 1;i<lyric.length;i++){
-//              if(lyric[i].split("[")[1].split("]")[1]){
-//                root.lyric.push({
-//                  lyric:lyric[i].split("[")[1].split("]")[1],
-//                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
-//                  lyFontStyle:{//所有单条歌词样式
-//                    fontSize:'14px',
-//                    color:'white'
-//                  },
-//                })
-//              }
-//
-//            }
-//          }
-//        })
-//
-//
-//      },
       getSongMessage(){
         const root = this;
         root.songMessage = JSON.parse(sessionStorage.getItem('songMessage'));
@@ -100,15 +76,19 @@
         const root = this;
 
         currentTime.$on('currentTime',(msg) =>  {
-
           root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
-
-
-            for(let i = 0;i <msg.lyric.length;i++){
-              root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
-              root.$set(root.lyric[i].lyFontStyle,'color',msg.lyric[i].lyFontStyle.color);
-            }
-            root.$set(root.transform,'transform','translateY('+(msg.i*20*(-1)+20)+'px)');
+          for(let i = 0;i <msg.lyric.length;i++){
+            root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
+            root.$set(root.lyric[i].lyFontStyle,'color',msg.lyric[i].lyFontStyle.color);
+          }
+          root.$set(root.transform,'transform','translateY('+(msg.i*20*(-1)+20)+'px)');
+          if($('#audio')[0].paused){
+            root.showPlay = true;
+            root.animationPlayState.animationPlayState = 'paused';
+          }else{
+            root.showPlay = false;
+            root.animationPlayState.animationPlayState = 'running';
+          }
         })
       },
       doSong(s){

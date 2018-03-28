@@ -47,10 +47,10 @@
         animationPlayState:{
           animationPlayState:'running'
         },
-        i:0,
         lyric:[]
       }
     },
+
     created(){
       this.getBus();
     },
@@ -62,9 +62,12 @@
 
     },
     methods:{
+
       getBus(){
         const root = this;
         Bus.$on('acceptMessage',(msg) => {
+          root.songRange = 0;
+          root.songMaxRange = 0;
           root.songSmallMessage = msg;
           root.showPlay = false;
           root.animationPlayState.animationPlayState = 'running'
@@ -134,22 +137,26 @@
               i : num,
               lyric : root.lyric
             }
+            if($('#audio')[0].paused){
+              root.showPlay = true;
+              root.animationPlayState.animationPlayState = 'paused';
+            }else{
+              root.showPlay = false;
+              root.animationPlayState.animationPlayState = 'running';
+            }
             currentTime.$emit('currentTime',para);
           }
           if(root.songRange == root.songMaxRange){
-            root.showPlay = true;
-            clearInterval(root.timeStart)
+//            root.showPlay = true;
+
           }
-
-
-
         },70)
       },
       doSong(s){
         const root = this;
         switch (s){
-          case 'play':root.showPlay = !root.showPlay;$('#audio')[0].pause();root.animationPlayState.animationPlayState = 'paused';break;
-          case 'pause':root.showPlay = !root.showPlay;$('#audio')[0].play();root.animationPlayState.animationPlayState = 'running';break;
+          case 'play':root.showPlay = true;$('#audio')[0].pause();root.animationPlayState.animationPlayState = 'paused';break;
+          case 'pause':root.showPlay = false;$('#audio')[0].play();root.animationPlayState.animationPlayState = 'running';break;
           case 'close':clearInterval(root.timeStart);root.songSmallMessage.showSmallSong=false;
             $('#audio')[0].pause();root.songRange=0;root.songMaxRange=0;break;
         }
