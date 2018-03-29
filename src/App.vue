@@ -53,6 +53,8 @@
 
     created(){
       this.getBus();
+
+
     },
     updated(){
       $('.mt-range-thumb').css('top','10px');
@@ -73,7 +75,6 @@
           root.animationPlayState.animationPlayState = 'running'
           root.getSongTime();
           root.getSong();
-
         })
       },
       getSong(){

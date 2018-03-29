@@ -8,18 +8,21 @@
 
       <span size="large" v-for="item in badgeList" @click="getData(item.title)">{{item.title}}</span>
     </div>
-    <div class="songDiv" v-for="item in songList" @click="doSong(item)">
-      <div class="leftDiv">
-        <div class="songnameDiv">{{item.songname}}</div>
-        <div class="lineDiv">-</div>
-        <div class="singerDiv">{{item.singer[0].name}}</div>
-      </div>
-      <div class="rightDiv">
-        <span class="iconfont bofang"></span>
-        <span class="iconfont shoucang" @click.stop="collect(item)"></span>
-        <span class="iconfont xiazai"></span>
+    <div class="songParentDiv">
+      <div class="songDiv" v-for="item in songList" @click="doSong(item)">
+        <div class="leftDiv">
+          <div class="songnameDiv">{{item.songname}}</div>
+          <div class="lineDiv">-</div>
+          <div class="singerDiv">{{item.singer[0].name}}</div>
+        </div>
+        <div class="rightDiv">
+          <span class="iconfont bofang"></span>
+          <span class="iconfont shoucang" @click.stop="collect(item)"></span>
+          <span class="iconfont xiazai"></span>
+        </div>
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -197,6 +200,11 @@
   .xiazai{
     color: #409EFF;
     position: relative;
+  }
+  .songParentDiv{
+    float: left;
+    margin-top: 50px;
+    width: 100%;
   }
 </style>
 
