@@ -5,7 +5,7 @@
 ## 运行方式
 
 ``` bash
-# 进入根目录下载依赖 npm nstall
+# 进入根目录下载依赖 npm install
 
 # 运行项目
 npm run dev
