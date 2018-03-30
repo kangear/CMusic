@@ -85,7 +85,7 @@
   .messageDiv{
     width: calc(100% - 20px);
     float: left;
-    margin: 10px;
+    margin: 10px 10px 10vh 10px;
     word-break:break-all;
     line-height: 40px;
     color: #909399;
