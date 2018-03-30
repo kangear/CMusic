@@ -5,12 +5,12 @@
 ## 运行方式
 
 ``` bash
-# 进入根目录下载依赖 icnpm nstall
+# 进入根目录下载依赖 npm nstall
 
 # 运行项目
 npm run dev
 
-# 服务端运行方式打开server文件下载依赖 c
+# 服务端运行方式打开server文件下载依赖 
 npm install
 
 # 开启服务
