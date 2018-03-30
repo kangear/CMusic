@@ -1,5 +1,15 @@
 # 音乐播放器
 
+## 项目预览
+
+![image](http://cgdmusic.cn:1234/CMusic/show/CMusic.gif)
+
+## 项目地址(使用手机微信观看更佳)
+
+
+[http://cgdmusic.cn:1234/CMusic/](http://cgdmusic.cn:1234/CMusic/)
+
+
 ## 运行方式
 
 ### 1、安装前台项目依赖,进入项目根目录输入
