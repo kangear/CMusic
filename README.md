@@ -2,7 +2,7 @@
 
 ## 项目预览
 
-![image](http://cgdmusic.cn:1234/CMusic/show/CMusic.gif)
+![image](https://github.com/hhzzcc/CMusic/CMusic.gif)
 
 ## 项目地址(使用手机微信观看更佳)
 
