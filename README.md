@@ -1,30 +1,21 @@
-# my-project
+# 音乐播放器
 
-> A Vue.js project
+> 
 
-## Build Setup
+## 运行方式
 
 ``` bash
-# install dependencies
-npm install
+# 进入根目录下载依赖 icnpm nstall
 
-# serve with hot reload at localhost:8080
+# 运行项目
 npm run dev
 
-# build for production with minification
-npm run build
+# 服务端运行方式打开server文件下载依赖 c
+npm install
 
-# build for production and view the bundle analyzer report
-npm run build --report
+# 开启服务
+ node server 
 
-# run unit tests
-npm run unit
+# 打开网页输入 localhost:8080
 
-# run e2e tests
-npm run e2e
 
-# run all tests
-npm test
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

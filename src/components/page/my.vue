@@ -60,7 +60,7 @@
         this.$router.push({path:'/myCollect'})
       },
       switchTheme(){
-        Toast('敬请期待')
+        this.$router.push({path:'/switchTheme'})
       },
       callHzc(){
         Toast('敬请期待')

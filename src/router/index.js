@@ -10,6 +10,7 @@ import Search from '@/components/page/search'
 import My from '@/components/page/my'
 
 import MyCollect from '@/components/my/myCollect'
+import SwitchTheme from '@/components/my/switchTheme'
 
 import PlaySongIndex from '@/components/playSong/index'
 
@@ -43,6 +44,11 @@ export default new Router({
       path:'/myCollect',
       name: '我的收藏',
       component: MyCollect,
+    },
+    {
+      path:'/switchTheme',
+      name: '切换主题',
+      component: SwitchTheme,
     }
 
   ]

@@ -12,7 +12,7 @@
       <img class="playImg" :style="animationPlayState"  :src="'http://imgcache.qq.com/music/photo/album_300/'+(songMessage.albumid%100)+'/300_albumpic_'+songMessage.albumid+'_0.jpg'">
     </div>
     <!--<audio id="audio" :src="'http://ws.stream.qqmusic.qq.com/C100'+songMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>-->
-
+    <div class="lyricTitle">{{lyric[0].lyric}}</div>
     <div class="lyric">
       <div class="transformDiv" :style="transform">
         <div v-for="item in lyric" :style="item.lyFontStyle">{{item.lyric}}</div>
@@ -68,6 +68,7 @@
       getSongMessage(){
         const root = this;
         root.songMessage = JSON.parse(sessionStorage.getItem('songMessage'));
+        root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
         root.showPlay = false;
         root.animationPlayState.animationPlayState = 'running'
 
@@ -76,18 +77,20 @@
         const root = this;
 
         currentTime.$on('currentTime',(msg) =>  {
-          root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
-          for(let i = 0;i <msg.lyric.length;i++){
-            root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
-            root.$set(root.lyric[i].lyFontStyle,'color',msg.lyric[i].lyFontStyle.color);
-          }
-          root.$set(root.transform,'transform','translateY('+(msg.i*20*(-1)+20)+'px)');
-          if($('#audio')[0].paused){
-            root.showPlay = true;
-            root.animationPlayState.animationPlayState = 'paused';
-          }else{
-            root.showPlay = false;
-            root.animationPlayState.animationPlayState = 'running';
+          if(msg){
+            root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
+            for(let i = 0;i <msg.lyric.length;i++){
+              root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
+              root.$set(root.lyric[i].lyFontStyle,'color',msg.lyric[i].lyFontStyle.color);
+            }
+            root.$set(root.transform,'transform','translateY('+(msg.i*20*(-1)+20)+'px)');
+            if($('#audio')[0].paused){
+              root.showPlay = true;
+              root.animationPlayState.animationPlayState = 'paused';
+            }else{
+              root.showPlay = false;
+              root.animationPlayState.animationPlayState = 'running';
+            }
           }
         })
       },
@@ -184,8 +187,21 @@
   #audio{
     display: none;
   }
-  .lyric{
+  .lyricTitle{
+    width: 100%;
+    float: left;
+    text-align: center;
+    height: 20px;
+    line-height: 20px;
+    color: wheat;
+    position: relative;
     margin-top: 25px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lyric{
+    margin-top: 50px;
     height: 60px;
     overflow: hidden;
     position: relative;
@@ -201,6 +217,9 @@
     text-align: center;
     font-size: 0.8rem;
     position: relative;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   .bofang,.zanting{
     font-size: 56px;

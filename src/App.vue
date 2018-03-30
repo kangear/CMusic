@@ -17,8 +17,11 @@
             :max="songMaxRange"
             :bar-height="1">
           </mt-range>
-          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
+          <audio id="audio"  autoplay :src="'http://dl.stream.qqmusic.qq.com/C400'+songSmallMessage.songmid+'.m4a?guid=8455821612&vkey=EA6A6F21D76EADFA04BB9CF46BA13CDB9886E93944AFE314DC2C8A031AE742B262CD1D94820996A1D01454560B1F8C2581975C26E097C4E9&uin=0&fromtag=38'"  controls="controls"></audio>
         </div>
+
+
+
 
       </div>
     </transition>
@@ -70,6 +73,7 @@
         Bus.$on('acceptMessage',(msg) => {
           root.songRange = 0;
           root.songMaxRange = 0;
+
           root.songSmallMessage = msg;
           root.showPlay = false;
           root.animationPlayState.animationPlayState = 'running'
@@ -77,25 +81,28 @@
           root.getSong();
         })
       },
+      //调用后台接口获取歌词
       getSong(){
         const root = this;
         root.lyric = [];
         http.get('/getLrc',{params:{songId:root.songSmallMessage.songmid}}).then((data)=>{
           eval(data.data);//再次执行一次代码
           function MusicJsonCallback_lrc(data){
+
             let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
             for(let i = 1;i<lyric.length;i++){
-              if(lyric[i].split("[")[1].split("]")[1]){
-                root.lyric.push({
-                  lyric:lyric[i].split("[")[1].split("]")[1],
-                  lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
-                  lyFontStyle:{//所有单条歌词样式
-                    fontSize:'14px',
-                    color:'white'
-                  },
-                })
+              if(lyric[i]){
+                if(lyric[i].split("[")[1].split("]")[1]){
+                  root.lyric.push({
+                    lyric:lyric[i].split("[")[1].split("]")[1],
+                    lyricTime:root.getTime(lyric[i].split("[")[1].split("]")[0]),
+                    lyFontStyle:{//所有单条歌词样式
+                      fontSize:'14px',
+                      color:'white'
+                    },
+                  })
+                }
               }
-
             }
           }
           sessionStorage.setItem('songLyric',JSON.stringify(root.lyric));
@@ -108,7 +115,7 @@
         let num = 0;
         clearInterval(root.timeStart)
         root.timeStart = setInterval(function () {
-          if( $('#audio')[0]){
+          if( $('#audio')[0] && root.songSmallMessage.songmid){
             root.songRange = Math.floor($('#audio')[0].currentTime * 10 );
             root.songMaxRange = Math.floor($('#audio')[0].duration * 10 );
             for(let i = 0; i < root.lyric.length; i++){
@@ -159,7 +166,7 @@
           case 'play':root.showPlay = true;$('#audio')[0].pause();root.animationPlayState.animationPlayState = 'paused';break;
           case 'pause':root.showPlay = false;$('#audio')[0].play();root.animationPlayState.animationPlayState = 'running';break;
           case 'close':clearInterval(root.timeStart);root.songSmallMessage.showSmallSong=false;
-            $('#audio')[0].pause();root.songRange=0;root.songMaxRange=0;break;
+            $('#audio')[0].pause();root.songRange=0;root.songMaxRange=0;root.songSmallMessage = {};break;
         }
       },
       playSong(){
