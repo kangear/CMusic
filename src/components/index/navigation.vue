@@ -1,6 +1,6 @@
 <template>
   <div id="parent">
-    <div class="header">
+    <div class="themeTitle">
       <div v-for="item in navigation" :style="item.style" @click="loadPage(item.className)" >
         <span :class="item.icon"></span>{{item.name}}
       </div>
@@ -12,7 +12,7 @@
 
 <script>
   import Bus from '../../global/bus.vue'
-
+  import $ from 'jquery'
   export default {
     data(){
       return{
@@ -49,6 +49,27 @@
             icon:'iconfont icon-wodekong',
             path:'/navigation/my'
           },
+        ],
+        theme:[
+          {
+            value:0,
+            style:{
+              background:'#054547',
+            }
+          },
+          {
+            value:1,
+            style:{
+              background:'rgb(116, 3, 73)',
+            }
+          },
+          {
+            value:2,
+            style:{
+              background:'rgb(95, 86, 54)',
+            }
+          },
+
         ]
       }
     },
@@ -56,7 +77,31 @@
       this.loadPage(location.hash.split('#/navigation/')[1]);
       this.getBus();
     },
+    updated(){
+      this.getTheme();
+    },
     methods:{
+      getTheme(){
+        const root = this;
+        if(localStorage.getItem('songTheme')){
+          let value = localStorage.getItem('songTheme');
+          for(let i = 0;i<root.theme.length; i++){
+            if(root.theme[i].value == value){
+              $('.themeTitle').css('background',root.theme[i].style.background);
+              $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,'+root.theme[i].style.background+',#606266)');
+              $('.themeSmallSong').css('background','-o-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','-moz-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+            }
+          }
+        }else{
+          $('.themeTitle').css('background','#054547');
+          $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,#054547,#606266)');
+          $('.themeSmallSong').css('background','-o-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','-moz-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','linear-gradient(to right, #054547 , #606266)');
+        }
+      },
       getBus(){
         const root = this;
 //        Bus.$on('acceptMessage',(msg) => {
@@ -85,17 +130,16 @@
 </script>
 
 <style scoped>
-  .header{
+  .themeTitle{
     width: 100%;
     max-width: 520px;
     margin: 0 auto;
     position: fixed;
     top: 0;
-    background: #054547;
     height: 80px;
     z-index: 999;
   }
-  .header>div{
+  .themeTitle>div{
     float: left;
     width: calc(25% - 10px);
     text-align: center;

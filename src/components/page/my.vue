@@ -13,7 +13,7 @@
       <div class="rightDiv"><span style="margin-right: 5px">version 2.0</span><mt-badge type="error" size="small">new</mt-badge></div>
     </div>
     <div class="myDiv" @click="callHzc">
-      <div class="leftDiv"><span class="iconfont lianxi" ></span>联系作者</div>
+      <div class="leftDiv"><span class="iconfont lianxi" ></span>作者信息</div>
       <div class="rightDiv"><span class="iconfont jiantou"></span></div>
     </div>
     <div class="myDiv" @click="share">
@@ -35,6 +35,7 @@
   import Vue from 'vue'
   import { Toast } from 'mint-ui';
   import { Popup } from 'mint-ui';
+  import { Indicator } from 'mint-ui';
 
   Vue.component(Popup.name, Popup);
   Vue.component(Badge.name, Badge);
@@ -51,6 +52,10 @@
 
     methods:{
       init: function () {
+        Indicator.open();
+        setTimeout(function () {
+          Indicator.close();
+        },100)
         let url = 'http://v3.jiathis.com/code/jiathis_m.js'
         let script = document.createElement('script')
         script.setAttribute('src', url)
@@ -63,7 +68,7 @@
         this.$router.push({path:'/switchTheme'})
       },
       callHzc(){
-        Toast('敬请期待')
+        this.$router.push({path:'/authorMessage'})
       },
       share(){
         const root = this;

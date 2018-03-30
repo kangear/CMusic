@@ -2,7 +2,7 @@
   <div id="app">
     <router-view/>
     <transition name="slide-fade">
-      <div class="smallSong" v-if="songSmallMessage.showSmallSong" >
+      <div class="themeSmallSong" v-if="songSmallMessage.showSmallSong" >
         <span class="iconfont guanbi" @click="doSong('close')"></span>
         <span v-if="showPlay" @click="doSong('pause')" class="iconfont bofang"></span>
         <span v-if="!showPlay" @click="doSong('play')" class="iconfont zanting"></span>
@@ -17,7 +17,7 @@
             :max="songMaxRange"
             :bar-height="1">
           </mt-range>
-          <audio id="audio"  autoplay :src="'http://dl.stream.qqmusic.qq.com/C400'+songSmallMessage.songmid+'.m4a?guid=8455821612&vkey=EA6A6F21D76EADFA04BB9CF46BA13CDB9886E93944AFE314DC2C8A031AE742B262CD1D94820996A1D01454560B1F8C2581975C26E097C4E9&uin=0&fromtag=38'"  controls="controls"></audio>
+          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
         </div>
 
 
@@ -35,6 +35,7 @@
   import Bus from './global/bus.vue'
   import currentTime from './global/currentTime.vue'
   import { Range } from 'mint-ui';
+  import { Indicator } from 'mint-ui';
   import Base64 from 'js-base64'
 
   Vue.component(Range.name, Range);
@@ -50,7 +51,28 @@
         animationPlayState:{
           animationPlayState:'running'
         },
-        lyric:[]
+        lyric:[],
+        theme:[
+          {
+            value:0,
+            style:{
+              background:'#054547',
+            }
+          },
+          {
+            value:1,
+            style:{
+              background:'rgb(116, 3, 73)',
+            }
+          },
+          {
+            value:2,
+            style:{
+              background:'rgb(95, 86, 54)',
+            }
+          },
+
+        ]
       }
     },
 
@@ -58,22 +80,42 @@
       this.getBus();
 
 
+
     },
     updated(){
+      this.getTheme();
       $('.mt-range-thumb').css('top','10px');
       $('.mt-range-thumb').css('width','10px');
       $('.mt-range-thumb').css('height','10px');
       $('.mt-range-runway').css('width','100%');
-
     },
     methods:{
-
+      getTheme(){
+        const root = this;
+        if(localStorage.getItem('songTheme')){
+          let value = localStorage.getItem('songTheme');
+          for(let i = 0;i<root.theme.length; i++){
+            if(root.theme[i].value == value){
+              $('.themeTitle').css('background',root.theme[i].style.background);
+              $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,'+root.theme[i].style.background+',#606266)');
+              $('.themeSmallSong').css('background','-o-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','-moz-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+            }
+          }
+        }else{
+          $('.themeTitle').css('background','#054547');
+          $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,#054547,#606266)');
+          $('.themeSmallSong').css('background','-o-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','-moz-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','linear-gradient(to right, #054547 , #606266)');
+        }
+      },
       getBus(){
         const root = this;
         Bus.$on('acceptMessage',(msg) => {
           root.songRange = 0;
           root.songMaxRange = 0;
-
           root.songSmallMessage = msg;
           root.showPlay = false;
           root.animationPlayState.animationPlayState = 'running'
@@ -88,7 +130,6 @@
         http.get('/getLrc',{params:{songId:root.songSmallMessage.songmid}}).then((data)=>{
           eval(data.data);//再次执行一次代码
           function MusicJsonCallback_lrc(data){
-
             let lyric = Base64.Base64.decode(data.lyric).split("[offset:0]")[1].split('\n');
             for(let i = 1;i<lyric.length;i++){
               if(lyric[i]){
@@ -149,6 +190,7 @@
               root.showPlay = true;
               root.animationPlayState.animationPlayState = 'paused';
             }else{
+
               root.showPlay = false;
               root.animationPlayState.animationPlayState = 'running';
             }
@@ -160,6 +202,7 @@
           }
         },70)
       },
+
       doSong(s){
         const root = this;
         switch (s){
@@ -190,20 +233,15 @@
   .iconfont{
     font-size: 1.3rem;
   }
-  .smallSong{
+  .themeSmallSong{
     width: 100%;
     position: fixed;
     bottom: 0;
     height: 10vh;
     max-width: 520px;
-    background: -webkit-linear-gradient(to right,#054547,#606266); /* Safari 5.1 - 6.0 */
-    /*background: -webkit-gradient(linear,top,from(#1F2D3D),to(#054547));*/
-    background: -o-linear-gradient(to right, #054547 , #606266); /* Opera 11.1 - 12.0 */
-    background: -moz-linear-gradient(to right, #054547 , #606266); /* Firefox 3.6 - 15 */
-    background: linear-gradient(to right, #054547 , #606266); /* 标准的语法 */
-    /*background-color:#054547 ;*/
+
   }
-  .smallSong>div{
+  .themeSmallSong>div{
     float: left;
     height: 100%;
   }
@@ -288,6 +326,16 @@
     height: 100%;
     float: left;
   }
+  /*.themeTitle{*/
+    /*background: #054547;*/
+
+  /*}*/
+  /*.themeSmallSong{*/
+    /*background: -webkit-linear-gradient(to right,#054547,#606266); !* Safari 5.1 - 6.0 *!*/
+    /*background: -o-linear-gradient(to right, #054547 , #606266); !* Opera 11.1 - 12.0 *!*/
+    /*background: -moz-linear-gradient(to right, #054547 , #606266); !* Firefox 3.6 - 15 *!*/
+    /*background: linear-gradient(to right, #054547 , #606266); !* 标准的语法 *!*/
+  /*}*/
 </style>
 
 

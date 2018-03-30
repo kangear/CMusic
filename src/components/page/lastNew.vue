@@ -25,24 +25,18 @@
   export default {
     data(){
       return{
-        title:'',
+
         songListIndex:[],
         songList:[],
         dropDown:0,
       }
     },
     created(){
-      const root = this;
-      // this.getTitle();
+
       this.getData();
 
     },
     methods:{
-
-      getTitle(){
-        const root = this;
-        root.title = root.$router.history.current.name;
-      },
       //获取最新音乐数据
       getData(){
         const root = this;
@@ -81,7 +75,6 @@
         }
       },
       doSong(item){
-        const root = this;
         item.showSmallSong = true;
         Bus.$emit('acceptMessage', item)
 

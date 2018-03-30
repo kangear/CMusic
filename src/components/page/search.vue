@@ -53,6 +53,10 @@
       }
     },
     created(){
+      Indicator.open();
+      setTimeout(function () {
+        Indicator.close();
+      },100)
 
     },
     watch:{

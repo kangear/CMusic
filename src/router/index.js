@@ -11,6 +11,7 @@ import My from '@/components/page/my'
 
 import MyCollect from '@/components/my/myCollect'
 import SwitchTheme from '@/components/my/switchTheme'
+import AuthorMessage from'@/components/my/authorMessage'
 
 import PlaySongIndex from '@/components/playSong/index'
 
@@ -49,6 +50,11 @@ export default new Router({
       path:'/switchTheme',
       name: '切换主题',
       component: SwitchTheme,
+    },
+    {
+      path:'/authorMessage',
+      name:'作者信息',
+      component:AuthorMessage,
     }
 
   ]

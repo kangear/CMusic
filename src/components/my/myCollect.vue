@@ -1,6 +1,6 @@
 <template>
   <div class="parent">
-    <div class="title">
+    <div class="themeTitle">
       <span class="iconfont fanhui" @click="goBack"></span>
       <span class="iconfont shoucang"></span>我的收藏</div>
     <div class="songDiv"   v-for="item in songList" @click="doSong(item.data)">
@@ -82,13 +82,12 @@
   .parent{
     margin-top: 80px;
   }
-  .title{
+  .themeTitle{
     position: fixed;
     top: 0;
     max-width: 520px;
     margin: 0 auto;
     width: 100%;
-    background: #054547;
     height: 80px;
     text-align: center;
     line-height: 80px;

@@ -1,5 +1,5 @@
 <template>
-  <div id="parent">
+  <div class="themeTitle">
     <transition name="slide-fade">
         <div class="welcome" v-if="showLogin">Welcome</div>
     </transition>
@@ -31,6 +31,7 @@
 <script>
   import Vue from 'vue'
   import { Button } from 'mint-ui';
+  import $ from 'jquery'
 
   Vue.component(Button.name, Button);
   export default {
@@ -39,12 +40,58 @@
         showLogin:false,
         showCMusic:false,
         loadingBtn:false,
+        theme:[
+          {
+            value:0,
+            style:{
+              background:'#054547',
+            }
+          },
+          {
+            value:1,
+            style:{
+              background:'rgb(116, 3, 73)',
+            }
+          },
+          {
+            value:2,
+            style:{
+              background:'rgb(95, 86, 54)',
+            }
+          },
+
+        ]
       }
     },
     mounted(){
       this.loading();
     },
+    updated(){
+
+      this.getTheme();
+    },
     methods:{
+      getTheme(){
+        const root = this;
+        if(localStorage.getItem('songTheme')){
+          let value = localStorage.getItem('songTheme');
+          for(let i = 0;i<root.theme.length; i++){
+            if(root.theme[i].value == value){
+              $('.themeTitle').css('background',root.theme[i].style.background);
+              $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,'+root.theme[i].style.background+',#606266)');
+              $('.themeSmallSong').css('background','-o-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','-moz-linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+              $('.themeSmallSong').css('background','linear-gradient(to right, '+root.theme[i].style.background+' , #606266)');
+            }
+          }
+        }else{
+          $('.themeTitle').css('background','#054547');
+          $('.themeSmallSong').css('background','-webkit-linear-gradient(to right,#054547,#606266)');
+          $('.themeSmallSong').css('background','-o-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','-moz-linear-gradient(to right, #054547 , #606266)');
+          $('.themeSmallSong').css('background','linear-gradient(to right, #054547 , #606266)');
+        }
+      },
       loading(){
         const root = this;
         setTimeout(function () {
@@ -67,13 +114,15 @@
 </script>
 
 <style scoped>
-  #parent{
+  .themeTitle{
     text-align: center;
-    background: #054547;
     z-index: 1;
     position: relative;
+    width: 100%;
+    height: 100%;
+    float: left;
   }
-  #parent>div{
+  .themeTitle>div{
     float: left;
   }
   .welcome{

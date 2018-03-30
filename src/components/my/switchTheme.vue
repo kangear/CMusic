@@ -1,11 +1,12 @@
 <template>
   <div class="parent">
-    <div class="title">
+    <div class="themeTitle">
       <span class="iconfont fanhui" @click="goBack"></span>
       <span class="iconfont icon-tuijiankong"></span>切换主题</div>
-      <div v-for="(item,index) in theme" :id="'theme'+index" class="theme">
-        <img>
-        <div class="themeTitle"></div>
+      <div v-for="(item,index) in theme"  class="theme">
+        <div class="topBG" v-if="item.select"><span class="iconfont xuanzhong"></span></div>
+        <div class="themeBackground" :id="'theme'+index" @click="selectTheme(item.value)"></div>
+        <div class="themeFont">{{item.name}}</div>
       </div>
   </div>
 </template>
@@ -18,13 +19,25 @@
         theme:[
           {
             name:'默认',
-            value:0,
-          }
+            value:'0',
+            select:false,
+          },
+          {
+            name:'成熟',
+            value:'1',
+            select:false,
+          },
+          {
+            name:'复古',
+            value:'2',
+            select:false,
+          },
+
         ]
       }
     },
     created(){
-
+      this.getTheme();
     },
     methods:{
       goBack(){
@@ -32,6 +45,40 @@
         root.$router.go(-1);
 
       },
+      getTheme(){
+        const root = this;
+        if(localStorage.getItem('songTheme')){
+          let item = localStorage.getItem('songTheme');
+          for(let i = 0;i < this.theme.length; i++){
+            if(item == this.theme[i].value){
+              this.theme[i].select = true;
+              localStorage.setItem('songTheme',this.theme[i].value);
+            }else{
+              this.theme[i].select = false;
+            }
+          }
+        }else{
+          root.theme[0].select = true;
+          localStorage.setItem('songTheme',root.theme[0].value);
+        }
+      },
+      selectTheme(item){
+        MessageBox.confirm('是否更换主题?').then(action => {
+          for(let i = 0;i < this.theme.length; i++){
+            if(item == this.theme[i].value){
+              this.theme[i].select = true;
+              localStorage.setItem('songTheme',this.theme[i].value);
+            }else{
+              this.theme[i].select = false;
+            }
+          }
+
+          this.$router.push({path : '/'})
+        });
+
+
+
+      }
     }
   }
 </script>
@@ -39,13 +86,12 @@
   .parent{
     margin-top: 80px;
   }
-  .title{
+  .themeTitle{
     position: fixed;
     top: 0;
     max-width: 520px;
     margin: 0 auto;
     width: 100%;
-    background: #054547;
     height: 80px;
     text-align: center;
     line-height: 80px;
@@ -62,23 +108,50 @@
     margin: 0 20px;
   }
   .theme{
-    width: calc(100% / 4 - 50px);
+    width: calc(100% / 4 - 10px);
     float: left;
-    padding: 25px;
+    margin: 10px 5px;
+    position: relative;
   }
-  .theme>img,.theme>div{
+  .themeBackground{
     float: left;
     width: 100%;
+    height: 80px;
+    border-radius: 5px;
   }
-  .themeTitle{
+  .topBG{
+    position: absolute;
+    width: 100%;
+    height: 80px;
     text-align: center;
-    height: 20px;
-    line-height: 20px;
+    line-height: 80px;
+    z-index: 999;
+    border-radius: 5px;
+    font-size: 25px;
+  }
+  .topBG>span{
+    margin: 0;
+    color: #13CE66;
+  }
+  .themeFont{
+    margin-top: 5px;
+    text-align: center;
+    width: 100%;
+    float: left;
+    color: #909399;
 
   }
-  .theme{
-    background: red;
+  #theme0{
+    background: #054547;
   }
+  #theme1{
+    background: rgb(116, 3, 73);
+  }
+  #theme2{
+    background: rgb(95, 86, 54);
+  }
+
+
 
 
 </style>
