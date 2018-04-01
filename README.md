@@ -9,6 +9,10 @@
 
 [http://cgdmusic.cn:1234/CMusic/](http://cgdmusic.cn:1234/CMusic/)
 
+## 项目博客,可用去参考下
+
+[https://blog.csdn.net/hhzzcc_/article/details/79769386](https://blog.csdn.net/hhzzcc_/article/details/79769386)
+
 
 ## 运行方式
 
