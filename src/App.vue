@@ -4,6 +4,9 @@
     <transition name="slide-fade">
       <div class="themeSmallSong" v-if="songSmallMessage.showSmallSong" >
         <span class="iconfont guanbi" @click="doSong('close')"></span>
+        <span v-if="showIcon_shunxu" class="iconfont shunxu" @click="playModel('shunxu')"></span>
+        <span v-if="showIcon_danqu" class="iconfont danqu" @click="playModel('danqu')"></span>
+        <span v-if="showIcon_suiji" class="iconfont suiji" @click="playModel('suiji')"></span>
         <span v-if="showPlay" @click="doSong('pause')" class="iconfont bofang"></span>
         <span v-if="!showPlay" @click="doSong('play')" class="iconfont zanting"></span>
         <div class="leftDiv">
@@ -16,6 +19,8 @@
             :min="0"
             :max="songMaxRange"
             :bar-height="1">
+            <div class="rangeTime" slot="start" style="margin-right: 5px">{{startTime}}</div>
+            <div class="rangeTime" slot="end" style="margin-left: 10px">{{endTime}}</div>
           </mt-range>
           <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
         </div>
@@ -36,6 +41,7 @@
   import currentTime from './global/currentTime.vue'
   import { Range } from 'mint-ui';
   import { Indicator } from 'mint-ui';
+  import { Toast } from 'mint-ui';
   import Base64 from 'js-base64'
 
   Vue.component(Range.name, Range);
@@ -47,11 +53,17 @@
         timeStart:'',
         songSmallMessage:{},
         songRange:0,
-        songMaxRange:0,
+        songMaxRange:1,
         animationPlayState:{
           animationPlayState:'running'
         },
         lyric:[],
+        startTime:'',
+        endTime:'',
+
+        showIcon_shunxu:true,
+        showIcon_danqu:false,
+        showIcon_suiji:false,
         theme:[
           {
             value:0,
@@ -88,6 +100,7 @@
       $('.mt-range-thumb').css('width','10px');
       $('.mt-range-thumb').css('height','10px');
       $('.mt-range-runway').css('width','100%');
+      $('.mt-range-content').css('marginRight','unset')
     },
     methods:{
       getTheme(){
@@ -117,6 +130,10 @@
           root.songRange = 0;
           root.songMaxRange = 0;
           root.songSmallMessage = msg;
+          sessionStorage.setItem('songMessage',JSON.stringify(root.songSmallMessage));
+          if( $('#audio')[0] && root.songSmallMessage.songmid){
+            $('#audio')[0].play();
+          }
           root.showPlay = false;
           root.animationPlayState.animationPlayState = 'running'
           root.getSongTime();
@@ -159,6 +176,8 @@
           if( $('#audio')[0] && root.songSmallMessage.songmid){
             root.songRange = Math.floor($('#audio')[0].currentTime * 10 );
             root.songMaxRange = Math.floor($('#audio')[0].duration * 10 );
+            root.startTime = root.getNewTime(root.songRange / 10);
+            root.endTime = root.getNewTime(root.songMaxRange / 10);
             for(let i = 0; i < root.lyric.length; i++){
               if(root.songRange == root.lyric[i].lyricTime){
 
@@ -196,10 +215,30 @@
             }
             currentTime.$emit('currentTime',para);
           }
+          console.log(root.showIcon_danqu)
           if(root.songRange == root.songMaxRange){
-//            root.showPlay = true;
+            if(root.showIcon_shunxu){
+              let n = 0;
+              if(localStorage.getItem('collectMessage')){
+                console.log(root.songSmallMessage.songmid);
+                for(let i = 0 ;i <JSON.parse(localStorage.getItem('collectMessage')).length; i++){
+                  if(root.songSmallMessage.songmid == JSON.parse(localStorage.getItem('collectMessage'))[i].data.songmid){
+                    n = i+1;
+                  }
+                }
+                if(n >= JSON.parse(localStorage.getItem('collectMessage')).length){
+                  n = 0;
+                }
+              }
+              let data = JSON.parse(localStorage.getItem('collectMessage'))[n].data;
+              data.showSmallSong = true;
+              Bus.$emit('acceptMessage',data)
+            }else if(root.showIcon_danqu){
+              Bus.$emit('acceptMessage',root.songSmallMessage)
+            }
 
           }
+
         },70)
       },
 
@@ -214,7 +253,6 @@
       },
       playSong(){
         const root = this;
-        sessionStorage.setItem('songMessage',JSON.stringify(root.songSmallMessage));
         root.$router.push({path:'/playSongIndex'});
       },
       getTime(str){
@@ -222,6 +260,26 @@
         let seconds = parseInt(str.split(':')[1].split('.')[0]);
         let ms = parseInt(str.split('.')[1]);
         return Math.floor((minutes*60+seconds+ms/100)*10);
+      },
+      getNewTime(str){
+
+        let minutes = Math.floor(str / 60);
+        let seconds = Math.floor(str - 60 * minutes);
+        if(minutes < 10){
+          minutes = '0' + minutes;
+        }
+        if(seconds < 10){
+          seconds = '0' + seconds;
+        }
+        let time = minutes+':'+seconds;
+        return time;
+      },
+      playModel(str){
+        switch (str){
+          case 'shunxu':this.showIcon_shunxu = false;this.showIcon_danqu = true;Toast('已切换到单曲播放');break;
+          case 'danqu':this.showIcon_danqu = false;this.showIcon_suiji = true;Toast('已切换到随机播放');break;
+          case 'suiji':this.showIcon_suiji = false;this.showIcon_shunxu = true;Toast('已切换到顺序循环');break;
+        }
       }
 
     }
@@ -268,7 +326,8 @@
     display: none;
   }
   .mtRange{
-    margin-top: calc(5vh - 15px)
+    margin-top: calc(5vh - 15px);
+    width: 80%;
 
   }
 
@@ -290,10 +349,17 @@
     color: white;
     font-size: 3vh;
   }
+  .shunxu,.danqu,.suiji{
+    position: absolute;
+    top: 3vh;
+    right: 5vh;
+    color: white;
+    font-size: 4vh;
+  }
   .bofang,.zanting{
     position: absolute;
     top: 3vh;
-    right: 8vh;
+    right: 10vh;
     color: white;
     font-size: 4vh;
   }
@@ -325,6 +391,10 @@
     width: 100%;
     height: 100%;
     float: left;
+  }
+  .rangeTime{
+    color: white;
+    font-size: 10px;
   }
   /*.themeTitle{*/
     /*background: #054547;*/

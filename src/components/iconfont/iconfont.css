@@ -1,4 +1,4 @@
-@import "https://at.alicdn.com/t/font_575664_c39c18jp7rvpwrk9.css";
+@import "https://at.alicdn.com/t/font_575664_6eap7yihls4te29.css";
 
 .iconfont {
   font-family:"iconfont" !important;
@@ -34,7 +34,11 @@
 .banben:before{ content: "\e620" ; }
 .lianxi:before{ content: "\e646" ; }
 .fenxiang:before{ content: "\e624" ; }
-.shanchu:before{ content:"" '\e659' }
-.shoucangshi:before{ content:"" '\e663' }
-.xuanzhong:before{ content:"" '\e60e' }
+.shanchu:before{ content: '\e659' }
+.shoucangshi:before{ content: '\e663' }
+.xuanzhong:before{ content: '\e60e' }
+
+.shunxu:before{ content: '\e67e' }
+.danqu:before{ content: '\e607' }
+.suiji:before{ content: '\e66b' }
 

@@ -78,6 +78,7 @@
 
         currentTime.$on('currentTime',(msg) =>  {
           if(msg){
+            root.songMessage = JSON.parse(sessionStorage.getItem('songMessage'));
             root.lyric = JSON.parse(sessionStorage.getItem('songLyric'));
             for(let i = 0;i <msg.lyric.length;i++){
               root.$set(root.lyric[i].lyFontStyle,'fontSize',msg.lyric[i].lyFontStyle.fontSize);
