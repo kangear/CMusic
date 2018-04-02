@@ -215,12 +215,11 @@
             }
             currentTime.$emit('currentTime',para);
           }
-          console.log(root.showIcon_danqu)
           if(root.songRange == root.songMaxRange){
             if(root.showIcon_shunxu){
               let n = 0;
               if(localStorage.getItem('collectMessage')){
-                console.log(root.songSmallMessage.songmid);
+
                 for(let i = 0 ;i <JSON.parse(localStorage.getItem('collectMessage')).length; i++){
                   if(root.songSmallMessage.songmid == JSON.parse(localStorage.getItem('collectMessage'))[i].data.songmid){
                     n = i+1;
@@ -235,6 +234,16 @@
               Bus.$emit('acceptMessage',data)
             }else if(root.showIcon_danqu){
               Bus.$emit('acceptMessage',root.songSmallMessage)
+            }else if(root.showIcon_suiji){
+              let n = 0 ;
+              if(localStorage.getItem('collectMessage')){
+                let random_length = JSON.parse(localStorage.getItem('collectMessage')).length;
+
+                n = parseInt(random_length*Math.random())
+              }
+              let data = JSON.parse(localStorage.getItem('collectMessage'))[n].data;
+              data.showSmallSong = true;
+              Bus.$emit('acceptMessage',data)
             }
 
           }
