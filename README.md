@@ -2,7 +2,7 @@
 
 ## 项目预览
 
-![image](https://github.com/hhzzcc/CMusic/blob/master/CMusic.gif)
+![image](https://github.com/hhzzcc/CMusic/blob/master/CMusic.gif) 
 
 ## 项目地址(使用手机微信观看更佳)
 
