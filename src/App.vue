@@ -22,7 +22,7 @@
             <div class="rangeTime" slot="start" style="margin-right: 5px">{{startTime}}</div>
             <div class="rangeTime" slot="end" style="margin-left: 10px">{{endTime}}</div>
           </mt-range>
-          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0'"  controls="controls"></audio>
+          <audio id="audio"  autoplay :src="'http://ws.stream.qqmusic.qq.com/C100'+songSmallMessage.songmid+'.m4a?fromtag=0&guid=126548448'"  controls="controls"></audio>
         </div>
 
 
